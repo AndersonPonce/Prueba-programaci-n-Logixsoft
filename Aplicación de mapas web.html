@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Aplicación de Mapas Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeInPage 0.6s ease-in-out;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .page {
+            width: 90%;
+            max-width: 500px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .map-page {
+            width: 95%;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h2 {
+            color: #0d47a1;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 14px 26px;
+            margin: 10px;
+            background-color: #0d47a1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1565c0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #0d47a1;
+            color: white;
+        }
+
+        .navigation {
+            margin-top: 20px;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+
+        #map, #heatmap {
+            width: 100%;
+            height: 75vh;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loginPage" class="page">
+            <h2><i class="fas fa-sign-in-alt icon"></i>Inicio de Sesión</h2>
+            <input type="text" id="username" placeholder="Usuario"><br>
+            <input type="password" id="password" placeholder="Contraseña"><br>
+            <button onclick="login()">Ingresar</button>
+        </div>
+
+        <div id="mapPage" class="hidden map-page">
+            <h2><i class="fas fa-map-marker-alt icon" style="color: red;"></i>Mapa con Clientes</h2>
+            <div id="map"></div>
+            <div class="navigation">
+                <button onclick="prevPage()"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button onclick="nextPage()">Siguiente <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div id="tablePage" class="hidden page">
+            <h2><i class="fas fa-table icon"></i>Tabla de Clientes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Latitud</th>
+                        <th>Longitud</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Punto 1</td><td>13.705243</td><td>-89.24231</td></tr>
+                    <tr><td>Punto 2</td><td>13.696674</td><td>-89.197927</td></tr>
+                    <tr><td>Punto 3</td><td>14.692511</td><td>-87.86136</td></tr>
+                    <tr><td>Punto 4</td><td>12.022747</td><td>-86.252007</td></tr>
+                    <tr><td>Punto 5</td><td>8.103289</td><td>-80.596013</td></tr>
+                </tbody>
+            </table>
+            <div class="navigation">
+                <button onclick="prevPage()"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button onclick="nextPage()">Siguiente <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div id="heatmapPage" class="hidden map-page">
+            <h2><i class="fas fa-fire icon" style="color: red;"></i>Mapa de Calor</h2>
+            <div id="heatmap"></div>
+            <div class="navigation">
+                <button onclick="prevPage()"><i class="fas fa-arrow-left"></i> Anterior</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        const pages = ['loginPage', 'mapPage', 'tablePage', 'heatmapPage'];
+
+        function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            if (user === 'prueba' && pass === '12345') {
+                showPage(1);
+                initMap();
+                initHeatmap();
+            } else {
+                alert('Credenciales incorrectas');
+            }
+        }
+
+        function showPage(index) {
+            pages.forEach((id, i) => {
+                const el = document.getElementById(id);
+                el.classList.add('hidden');
+                el.classList.remove('page', 'map-page');
+                if (i === index) {
+                    el.classList.remove('hidden');
+                    el.classList.add(i === 1 || i === 3 ? 'map-page' : 'page');
+                }
+            });
+            currentPage = index;
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) showPage(currentPage + 1);
+        }
+
+        function prevPage() {
+            if (currentPage > 0) showPage(currentPage - 1);
+        }
+
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 6,
+                center: { lat: 13.705243, lng: -89.24231 },
+            });
+            const markers = [
+                { name: "Punto 1", lat: 13.705243, lng: -89.24231 },
+                { name: "Punto 2", lat: 13.696674, lng: -89.197927 },
+                { name: "Punto 3", lat: 14.692511, lng: -87.86136 },
+            ];
+            markers.forEach(point => {
+                new google.maps.Marker({
+                    position: { lat: point.lat, lng: point.lng },
+                    map,
+                    title: point.name
+                });
+            });
+        }
+
+        function initHeatmap() {
+            const heatmap = new google.maps.Map(document.getElementById("heatmap"), {
+                zoom: 5,
+                center: { lat: 12.0, lng: -85.0 },
+            });
+            const heatmapData = [
+                new google.maps.LatLng(13.705243, -89.24231),
+                new google.maps.LatLng(13.696674, -89.197927),
+                new google.maps.LatLng(14.692511, -87.86136),
+                new google.maps.LatLng(12.022747, -86.252007),
+                new google.maps.LatLng(8.103289, -80.596013),
+            ];
+            const heatmapLayer = new google.maps.visualization.HeatmapLayer({
+                data: heatmapData,
+            });
+            heatmapLayer.setMap(heatmap);
+        }
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjyM0CyjiksJbMk4SVzZTz-Uzn5QusoRE&libraries=visualization"></script>
+</body>
+</html>
