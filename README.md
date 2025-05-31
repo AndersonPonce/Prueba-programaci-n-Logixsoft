@@ -4,7 +4,7 @@ Este proyecto es una aplicación web desarrollada con HTML, CSS y JavaScript que
 
 
 
-## Funcionalidades
+## 💡 Funcionalidades
 
 - **Inicio de sesión** con credenciales simples(`Inicia sesión con las credenciales: Usuario: prueba, Contraseña: 12345`).
 - **Mapa de Clientes** con marcadores geográficos.
@@ -14,7 +14,7 @@ Este proyecto es una aplicación web desarrollada con HTML, CSS y JavaScript que
 
 
 
-## Tecnologías Utilizadas
+## 🔧 Tecnologías Utilizadas
 
 - HTML5, CSS3 y JavaScript (Vanilla JS)
 - [Google Maps API](https://developers.google.com/maps/documentation/javascript/overview)
@@ -22,7 +22,7 @@ Este proyecto es una aplicación web desarrollada con HTML, CSS y JavaScript que
 
 
 
-## Estructura
+## ⚙️ Estructura
 
 - `loginPage`: Formulario de autenticación.
 - `mapPage`: Muestra un mapa con marcadores.
