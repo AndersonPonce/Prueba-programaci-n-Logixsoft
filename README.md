@@ -6,17 +6,21 @@ Este proyecto es una aplicación web desarrollada con HTML, CSS y JavaScript que
 
 ## Funcionalidades
 
-- **Inicio de sesión** con credenciales simples (`prueba / 12345`).
+- **Inicio de sesión** con credenciales simples(`Inicia sesión con las credenciales: Usuario: prueba, Contraseña: 12345`).
 - **Mapa de Clientes** con marcadores geográficos.
 - **Tabla de Datos** con la información de ubicación (nombre, latitud y longitud).
 - **Mapa de Calor (Heatmap)** generado a partir de las ubicaciones.
 - Navegación entre secciones usando botones de siguiente y anterior.
+
+
 
 ## Tecnologías Utilizadas
 
 - HTML5, CSS3 y JavaScript (Vanilla JS)
 - [Google Maps API](https://developers.google.com/maps/documentation/javascript/overview)
 - FontAwesome para los íconos
+
+
 
 ## Estructura
 
